@@ -40,7 +40,7 @@ def analyze_review_sentiments(text):
 
 # Create a post_review helper function
 def post_review(data_dict):
-    request_url = backend_url + "/insert_review"
+    request_url = backend_url + "/insertReview"
     print(f"POST to {request_url}")
     try:
         response = requests.post(request_url, json=data_dict)

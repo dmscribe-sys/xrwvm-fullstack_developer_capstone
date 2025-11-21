@@ -13,7 +13,7 @@ from django.contrib.auth import login, authenticate
 import logging
 import json
 from django.views.decorators.csrf import csrf_exempt
-# from .populate import initiate
+from .populate import initiate
 from .models import CarMake, CarModel
 from .restapis import get_request, analyze_review_sentiments, post_review
 # Get an instance of a logger
@@ -72,13 +72,16 @@ def registration(request):
 # DMSCRIBE GET GETS REQUEST
 def get_cars(request):
     count = CarMake.objects.filter().count()
-    print(count)
     if count == 0:
-        initiate()  # This function doesn't exist yet — we skip it
+        from .populate import initiate
+        initiate()
     car_models = CarModel.objects.select_related('car_make')
     cars = []
-    for car_model in car_models:
-        cars.append({"CarModel": car_model.name, "CarMake": car_model.car_make.name})
+    for cm in car_models:
+        cars.append({
+            "CarMake": cm.car_make.name,
+            "CarModel": cm.name
+        })
     return JsonResponse({"CarModels": cars})
 
 # 1. Get all dealers (or by state)
@@ -112,8 +115,7 @@ def add_review(request):
     
     data = json.loads(request.body)
     try:
-        response = post_review(data)
-        return JsonResponse(response)
-    except:
-        return JsonResponse({"status": 500, "message": "Error posting review"})
-
+        post_review(data)  # Call the Cloud Function
+        return JsonResponse({"status": 200})  # ← THIS LINE IS THE KEY
+    except Exception as e:
+        return JsonResponse({"status": 500, "message": "Error"})
