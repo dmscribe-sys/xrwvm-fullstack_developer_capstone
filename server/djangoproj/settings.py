@@ -150,5 +150,6 @@ STATICFILES_DIRS = [
 # Fix CSRF for CognitiveClass/Skills Network labs
 CSRF_TRUSTED_ORIGINS = [
     'https://*.cognitiveclass.ai',
+    'https://dmscribe-8000.theianext-0-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai',
     'https://*.theianext-1-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai'
 ]
