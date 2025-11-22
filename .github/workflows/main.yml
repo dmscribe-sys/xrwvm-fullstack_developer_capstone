@@ -50,9 +50,9 @@ jobs:
     - name: Install JSHint
       run: npm install jshint --global
 
-    - name: Create .jshintrc file to support ES6
+    - name: Create .jshintrc file to support ES8
       run: |
-        echo '{ "esversion": 6 }' > .jshintrc
+        echo '{ "esversion": 8 }' > .jshintrc
 
     - name: Run Linter
       run: |
