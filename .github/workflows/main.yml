@@ -7,31 +7,42 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
 
-    - name: Set up Node
+    - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '18'
 
-    - name: Install & Build
+    - name: Install Python dependencies
       run: |
         cd server
         python -m venv venv
         source venv/bin/activate
+        pip install --upgrade pip
         pip install -r requirements.txt
+
+    - name: Run Django migrations
+      run: |
+        cd server
+        source venv/bin/activate
         python manage.py migrate --noinput
-        cd frontend
+
+    - name: Install Node dependencies and build
+      run: |
+        cd server/frontend
         npm ci
         npm run build --if-present
 
-    - name: Success
-      run: echo "Build completed successfully!"
+    - name: Success message
+      run: echo "CI/CD pipeline completed successfully!"
