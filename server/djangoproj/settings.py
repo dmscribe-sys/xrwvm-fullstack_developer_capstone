@@ -61,7 +61,7 @@ ROOT_URLCONF = 'djangoproj.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        #DMSCRIBE UPDATE
+        # DMSCRIBE UPDATE
         'DIRS': [
             os.path.join(BASE_DIR, 'frontend/static'),
             os.path.join(BASE_DIR, 'frontend/build'),
@@ -148,4 +148,7 @@ STATICFILES_DIRS = [
 
 
 # Fix CSRF for CognitiveClass/Skills Network labs
-CSRF_TRUSTED_ORIGINS = ['https://*.cognitiveclass.ai', 'https://*.theianext-1-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai']
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.cognitiveclass.ai',
+    'https://*.theianext-1-labs-prod-misc-tools-us-east-0.proxy.cognitiveclass.ai'
+]
