@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,40 +24,20 @@ jobs:
       with:
         node-version: '18'
 
-    - name: Cache pip dependencies
-      uses: actions/cache@v4
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('server/requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-
-    - name: Cache npm dependencies
-      uses: actions/cache@v4
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-npm-${{ hashFiles('server/frontend/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-npm-
-
     - name: Install Python dependencies
       run: |
         cd server
         python -m venv .venv
-        echo "$GITHUB_WORKSPACE/server/.venv/bin" >> $GITHUB_PATH  # Persistent activation
+        . .venv/bin/activate
         pip install --upgrade pip
         pip install -r requirements.txt
-
-    - name: Run Django migrations
-      run: |
-        cd server
         python manage.py migrate --noinput
 
     - name: Install Node dependencies and build
       run: |
         cd server/frontend
-        npm ci
+        npm install
         npm run build --if-present
 
-    - name: Success message
-      run: echo "CI/CD pipeline completed successfully!"
+    - name: Success
+      run: echo "Build successful!"
