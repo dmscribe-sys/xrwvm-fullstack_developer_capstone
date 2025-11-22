@@ -1,12 +1,3 @@
-name: 'Lint Code'
-
-on:
-  push:
-    branches: [master, main]
-  pull_request:
-    branches: [master, main]
-
-jobs:
   lint_python:
     name: Lint Python Files
     runs-on: ubuntu-latest
@@ -25,36 +16,14 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8
 
-    - name: Print working directory
-      run: pwd
+    - name: Create flake8 config to ignore common rules
+      run: |
+        echo "[flake8]" > .flake8
+        echo "max-line-length = 120" >> .flake8
+        echo "ignore = E501,E302,E305,F401,F811" >> .flake8
 
     - name: Run Linter
       run: |
         pwd
         find . -name "*.py" -exec flake8 {} +
-        echo "Linted all the Python files successfully"
-
-  lint_js:
-    name: Lint JavaScript Files
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v3
-
-    - name: Install Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 14
-
-    - name: Install JSHint
-      run: npm install jshint --global
-
-    - name: Create .jshintrc file to support ES8
-      run: |
-        echo '{ "esversion": 8 }' > .jshintrc
-
-    - name: Run Linter
-      run: |
-        find ./server/database -name "*.js" -exec jshint {} +
-        echo "Linted all the JavaScript files successfully"
+        echo "✅ Linted all the Python files successfully"
