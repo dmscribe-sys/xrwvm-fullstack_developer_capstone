@@ -54,10 +54,19 @@ const PostReview = () => {
       headers: {
           "Content-Type": "application/json",
       },
+      credentials: "include", 
       body: jsoninput,
   });
 
-  const json = await res.json();
+  let json;
+try {
+    json = await res.json();
+} catch (err) {
+    console.error("Error parsing JSON response:", err);
+    alert("Server returned invalid response.");
+    return;
+}
+
   if (json.status === 200) {
       window.location.href = window.location.origin+"/dealer/"+id;
   }
@@ -111,7 +120,7 @@ const PostReview = () => {
       </div >
 
       <div className='input_field'>
-      Car Year <input type="int" onChange={(e) => setYear(e.target.value)} max={2023} min={2015}/>
+      Car Year <input type="number" onChange={(e) => setYear(e.target.value)} max={2023} min={2015} placeholder="2023"/>
       </div>
 
       <div>

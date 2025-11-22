@@ -109,13 +109,23 @@ def get_dealer_reviews(request, dealer_id):
     return JsonResponse({"status": 200, "reviews": reviews})
 
 # 4. Add a review
+@csrf_exempt
 def add_review(request):
     if not request.user.is_authenticated:
         return JsonResponse({"status": 401, "message": "Unauthorized"})
-    
-    data = json.loads(request.body)
+
     try:
-        post_review(data)  # Call the Cloud Function
-        return JsonResponse({"status": 200})  # ← THIS LINE IS THE KEY
+        data = json.loads(request.body)
+        print("Parsed data:", data)
+
+        post_response = post_review(data)  # Express call
+        print("Response from backend:", post_response)
+
+        # Safely return the result
+        return JsonResponse(post_response, safe=False)
+    except json.JSONDecodeError as e:
+        print("JSON decode error:", e)
+        return JsonResponse({"status": 500, "message": "Invalid JSON sent"})
     except Exception as e:
-        return JsonResponse({"status": 500, "message": "Error"})
+        print("Error in add_review:", e)
+        return JsonResponse({"status": 500, "message": str(e)})

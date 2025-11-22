@@ -40,11 +40,16 @@ def analyze_review_sentiments(text):
 
 # Create a post_review helper function
 def post_review(data_dict):
-    request_url = backend_url + "/insertReview"
+    request_url = backend_url + "/insert_review"
     print(f"POST to {request_url}")
     try:
         response = requests.post(request_url, json=data_dict)
-        return response.json()
+        response.raise_for_status()
+        try:
+            return response.json()
+        except ValueError:
+            print("Invalid JSON in response:", response.text)
+            return {"status": "error", "message": "Invalid JSON response"}
     except Exception as e:
         print(f"Error posting review: {e}")
-        return {"status": "error"}
+        return {"status": "error", "message": str(e)}
