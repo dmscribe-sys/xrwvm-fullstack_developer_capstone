@@ -1,43 +1,59 @@
-name: CI/CD Pipeline
+name: 'Lint Code'
 
 on:
   push:
-    branches: [ main ]
+    branches: [master, main]
   pull_request:
-    branches: [ main ]
+    branches: [master, main]
 
 jobs:
-  build:
+  lint_python:
+    name: Lint Python Files
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
 
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+    
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v4
       with:
-        python-version: '3.11'
+        python-version: 3.12
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-
-    - name: Install Python dependencies
+    - name: Install dependencies
       run: |
-        cd server
-        python3 -m venv .venv
-        source .venv/bin/activate && \
-        pip install --upgrade pip setuptools wheel && \
-        pip install -r requirements.txt --no-cache-dir --use-pep517 && \
-        python manage.py migrate --noinput
+        python -m pip install --upgrade pip
+        pip install flake8
 
-    - name: Install Node dependencies and build React app
+    - name: Print working directory
+      run: pwd
+
+    - name: Run Linter
       run: |
-        cd server/frontend
-        npm install
-        npm run build --if-present
+        pwd
+        # This command finds all Python files recursively and runs flake8 on them
+        find . -name "*.py" -exec flake8 {} +
+        echo "Linted all the python files successfully"
 
-    - name: Success
-      run: echo "✅ Build successful!"
+  lint_js:
+      name: Lint JavaScript Files
+      runs-on: ubuntu-latest
+
+      steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 14
+
+      - name: Install JSHint
+        run: npm install jshint --global
+
+      - name: Run Linter
+        run: |
+          # This command finds all JavaScript files recursively and runs JSHint on them
+          find ./server/database -name "*.js" -exec jshint {} +
+          echo "Linted all the js files successfully"
